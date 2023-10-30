@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}
+質問箱 ページ{{ page_obj.number }}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    {% comment %} <div class="mt-4">
+        <div class="alert alert-danger d-flex align-items-center" role="alert">
+            <i class="fa-solid fa-triangle-exclamation fa-bounce fa-2xl me-3" style="animation-duration: 2s;"></i>
+            <div>
+                ただいまメンテナンス中です。サービスはご利用いただけません。
+            </div>
+            <i class="fa-solid fa-triangle-exclamation fa-bounce fa-2xl ms-auto" style="animation-duration: 2s;"></i>
+        </div>
+        <div class="alert alert-warning d-flex align-items-center" role="alert">
+            <i class="fa-regular fa-bell fa-shake fa-2xl me-3" style="--fa-animation-duration: 2s;"></i>
+            <div>
+                23:00 ~ 24:00にメンテナンスを行う場合があります。その間はサービスをご利用いただけません。
+            </div>
+        </div>
+    </div> {% endcomment %}
+
+    <h1 class="my-5">Q&Aリスト / Q&A List <span style="float: right">Page {{ page_obj.number }}</span></h1>
+    {% for comment in comments %}
+        {% if comment.parent_comment is None %}
+            <a style="text-decoration: none; color: black;" href="{% url 'comments:show' comment.id %}">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div style="display: flex; align-items: center;">
+                            <p class="card-text" style="flex-grow: 1;">
+                                {% if comment.body|length > 100 %}
+                                    <span id="comment-truncated-{{ comment.id }}">
+                                        {{ comment.body | slice:":100" }}
+                                    </span>
+                                    <span id="comment-toggle-{{ comment.id }}" class="comment-toggle">... </span>
+                                    <span id="comment-full-{{ comment.id }}" class="comment-full" style="display: none;">{{ comment.body }}</span>
+                                {% else %}
+                                    {{ comment.body }}
+                                {% endif %}
+                            </p>
+                            <div style="margin-left: 20px; color: #1b94e0"><i class="fa-solid fa-circle-chevron-right"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        {% endif %}
+    {% endfor %}
+    <div class="mb-5">
+        {% include 'simple_pagination.html' %}
+    </div>
+    <hr>
+    <div class="mb-5">
+        <p>
+            <a class="link-underline link-underline-opacity-0 link-opacity-50-hover" href="{% url 'comments:create' %}">
+                新規コメントの投稿
+            </a>
+        </p>
+    </div>
+</div>
+{% endblock content %}

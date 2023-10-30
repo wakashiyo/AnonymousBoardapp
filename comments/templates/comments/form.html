@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+ 
+{% block title %}
+{{ page_title }}
+{% endblock %}
+ 
+{% block content %}
+    <div class="container">
+        <h1 class="my-5">{{ form_name }}</h1>
+        <form method="POST" enctype="multipart/form-data" autocomplete="off">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="{{ form.body.id_for_label }}">{{ form.body.label }}</label>
+                {{ form.body }}
+            </div>
+
+            {% if form_name != "コメントの返信" %}
+            <div class="form-group mt-3 mb-3">
+                <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+                {{ form.password }}
+
+                {% if form.password.errors %}
+                    <ul class="errorlist" style="padding-left: 0;">
+                        {% for error in form.password.errors %}
+                            <li style="color: red; list-style: none;">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            {% endif %}
+            
+            <div class="form-group mt-3 mb-3">
+            </div>
+
+            <button type="submit" class="btn btn-primary">{{ button_label }}</button>
+        </form>
+        
+
+        {% if comment.id %}
+            <hr>
+            <p>
+                <a class="link-underline link-underline-opacity-0 link-opacity-50-hover" href="{% url 'comments:show' comment.id %}">
+                    [ 詳細ページに戻る ]
+                </a>
+            </p>
+        {% else %}
+            <hr>
+            <p>
+                <a class="link-underline link-underline-opacity-0 link-opacity-50-hover" href="{% url 'comments:index' %}">
+                    [ 一覧ページに戻る ]
+                </a>
+            </p>
+        {% endif %}
+        
+    </div>
+{% endblock content %}

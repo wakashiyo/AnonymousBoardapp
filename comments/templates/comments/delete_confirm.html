@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+ 
+{% block title %}
+{{ page_title }}
+{% endblock %}
+ 
+{% block content %}
+    <div class="container">
+        <h1 class="my-5">{{ form_name }}</h1>
+        <hr>
+ 
+        <div class="card mb-3">
+            <div class="card-body">
+                <p class="card-text">{{ comment.body }}</p>
+                {% comment %} {% if comment.file %}
+                    <img class="card-text img-fluid" src="{{ comment.file.url }}"/>
+                {% endif %} {% endcomment %}
+            </div>
+            <div class="card-footer">
+                Created at : {{ comment.created_at }}<br>
+                Updated at : {{ comment.updated_at }}
+            </div>
+        </div>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="password">パスワード:</label>
+                <input type="password" name="password">
+            </div>
+            <button type="submit" value="password" class="btn btn-primary">{{ button_label }}</button>
+        </form>
+
+
+
+
+        <hr>
+        <p>
+            <a class="link-underline link-underline-opacity-0 link-opacity-50-hover" href="{% url 'comments:show' comment.id %}">
+               [ 詳細ページに戻る ]
+            </a>
+        </p>
+    </div>
+{% endblock content %}

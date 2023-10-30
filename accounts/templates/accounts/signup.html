@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}
+サインイン/Signin
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex align-items-center py-4">
+    <div class="form-signin w-50 m-auto">
+        <form class="text-center" method="post">
+            {% csrf_token %}
+            <h1 class="h3 mt-5 mb-5 fw-normal">サインイン</h1>
+            <div class="form-floating">
+                {% render_field form.username class="form-control" placeholder="ユーザー名" autocomplete="off" style="border-radius: 0;" %}
+                <label for="floatingInput">ユーザー名</label>
+            </div>
+            <div class="form-floating">
+                {% render_field form.password1 class="form-control" placeholder="パスワード" autocomplete="off" style="border-radius: 0;" %}
+                <label for="floatingPassword">パスワード</label>
+            </div>
+            <div class="form-floating mb-5">
+                {% render_field form.password2 class="form-control" placeholder="パスワード(確認)" autocomplete="off" style="border-radius: 0;"%}
+                <label for="floatingPassword">パスワード(確認)</label>
+            </div>
+            {% if form.errors %}
+                <div class="alert alert-danger mt-3">
+                    {% if form.username.errors %}
+                        <div class="errorlist">
+                            <p>{{ form.username.errors }}</p>
+                        </div>
+                    {% endif %}
+                    {% if form.password1.errors %}
+                        <div class="errorlist">
+                            <p>{{ form.password1.errors }}</p>
+                        </div>
+                    {% endif %}
+                    {% if form.password2.errors %}
+                        <div class="errorlist">
+                            <p>{{ form.password2.errors }}</p>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+            
+            <button class="btn btn-primary w-50 py-2 mt-5 mb-5" type="submit">サインイン</button>
+            <p class="mt-5 mb-3">&copy; 2023.</p>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+
+            {% comment %} {% if form.errors %}
+                <div class="alert alert-danger mt-3">
+                    <strong>エラー：</strong> 入力した情報にエラーがあります。
+                </div>
+            {% endif %} {% endcomment %}

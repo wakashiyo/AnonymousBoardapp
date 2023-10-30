@@ -1,0 +1,28 @@
+<ul class="pagination justify-content-center pagination-lg mt-5">
+    {% if prev_id %}
+        <li class="page-item">
+            <a class="page-link rounded-start" href="{% url 'comments:show' prev_id %}">
+                <span class="custom-icon" aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+    {% else %}
+        <li class="page-item">
+            <a class="page-link rounded-start disabled">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+    {% endif %}
+    {% if next_id %}
+        <li class="page-item">
+            <a class="page-link" href="{% url 'comments:show' next_id %}">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    {% else %}
+        <li class="page-item">
+            <a class="page-link disabled">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    {% endif %}
+</ul>

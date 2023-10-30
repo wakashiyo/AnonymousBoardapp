@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+
+{% block title %}
+コメント詳細
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="text-head mt-5 mb-2">
+        <div class="text-end">
+            <button type="button" class="btn btn-success mb-3" onclick="location.href='{% url 'comments:reply' comment.id %}'">
+                返信 
+            </button>
+        </div>
+    </div>
+    <div class="card mb-5">
+        {% if user.is_authenticated %}
+        <div class="card-header bg-white" style="display: flex; align-items: center;">
+                {% comment %} <div class="RegularHeart me-3">
+                    <i class="regular-heart fa-regular fa-heart fa-2xl"></i><span class="ms-2" style="font-size: 15px;">{{ favorite_count }}件のお気に入り</span>
+                </div>
+                <div class="SolidHeart me-3" style="display:none">
+                    <i class="solid-heart fa-solid fa-heart fa-2xl"></i><span class="ms-2" style="font-size: 15px;">{{ favorite_count }}件のお気に入り</span>
+                </div> {% endcomment %}
+            <button tyoe="button" class="RegularThumbsUp" data-pk="{{ comment.id }}" style="border:none;background:none">
+                <i class="regular-thumbs-up ms-2 fa-regular fa-thumbs-up fa-2xl"></i>
+                    <span class="ms-2" style="font-size: 15px;">0件のいいね</span>
+            </button>
+            <button type="button" class="SolidThumbsUp" data-pk="{{ comment.id }}" style="border:none;background:none;display: none;">
+                    <i class="solid-thumbs-up ms-2 fa-solid fa-thumbs-up fa-2xl"></i><span class="ms-2" style="font-size: 15px;">{{ response_data.like_count }}件のいいね</span>
+            </button>
+        </div>
+        {% endif %}
+        <div class="card-body">
+            <p class="card-text">{{ comment.body }}</p>
+        </div>
+        <div class="card-footer">
+            Created at : {{ comment.created_at }}<br>
+            Updated at : {{ comment.updated_at }}
+        </div>
+    </div>
+
+    {% if comment.id %}
+        {% for reply in comment.replies.all %}
+            <div class="reply">
+                <div class="card mb-3">
+                    {% comment %}{% if user.is_authenticated %}
+                        <div class="card-header bg-white" style="display: flex; align-items: center;">
+                            <div class="RegularHeart me-3">
+                                <i class="regular-heart fa-regular fa-heart fa-2xl"></i><span class="ms-2" style="font-size: 15px;">{{ favorite_count }}件のお気に入り</span>
+                            </div>
+                            <div class="SolidHeart me-3" style="display:none">
+                                <i class="solid-heart fa-solid fa-heart fa-2xl"></i><span class="ms-2" style="font-size: 15px;">{{ fovarite_count }}件のお気に入り</span>
+                            </div>
+                            {%if like_count == NULL %}
+                                <button type="button" class="RegularThumbsUp" data-pk="{{ comment.id }}" style="border:none;background:none">
+                                    <i class="regular-thumbs-up ms-2 fa-regular fa-thumbs-up fa-2xl"></i>
+                                        <span class="ms-2" style="font-size: 15px;">0件のいいね</span>
+                                </button>
+                            {% else %}
+                                <button type="button" class="SolidThumbsUp" data-pk="{{ comment.id }}" style="border:none;background:none">
+                                    <i class="solid-thumbs-up ms-2 fa-solid fa-thumbs-up fa-2xl"></i><span class="ms-2" style="font-size: 15px;">{{ like_count }}件のいいね</span>
+                                </button>
+                            {% endif %}
+                        </div>
+                    {% endif %}{% endcomment %}
+                    <div class="card-body">
+                        <p class="card-text">{{ reply.body }}</p>
+                    </div>
+                    <div class="card-footer">
+                        Created at : {{ reply.created_at }}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p>このコメントにはまだ返信がありません。</p>
+        {% endfor %}
+    {% endif %}
+    <hr>
+
+    <div>
+        <p>
+            <a class="me-1 link-underline link-underline-opacity-0 link-opacity-50-hover" href="{% url 'comments:update' comment.id %}">
+               [ 編集 ]
+            </a>
+            <a class="link-underline link-underline-opacity-0 link-opacity-50-hover" href="{% url 'comments:delete' comment.id %}">
+               [ 削除 ]
+            </a>
+        </p>
+
+        <p>
+            <a class="link-underline link-underline-opacity-0 link-opacity-50-hover" href="{% url 'comments:index' %}">
+               [ 一覧に戻る ]
+        </p>
+    </div>
+    {% include 'prev_next.html' %}
+</div>
+
+<script>
+let $j = jQuery.noConflict();
+$j(document).ready(function() {
+    // ページ読み込み時にローカルストレージからいいねの状態を復元
+    $j('.RegularThumbsUp, .SolidThumbsUp').each(function() {
+        let commentId = $j(this).data('pk');
+        let isLiked = localStorage.getItem('comment_' + commentId) === 'liked';
+        if (isLiked) {
+            $j('.RegularThumbsUp[data-pk="' + commentId + '"]').hide();
+            $j('.SolidThumbsUp[data-pk="' + commentId + '"]').show();
+        }
+    });
+
+    // いいねボタンがクリックされたときの処理
+    $j('.RegularThumbsUp, .SolidThumbsUp').click(function() {
+        let commentId = $j(this).data('pk');
+        let isLiked = $j(this).hasClass('SolidThumbsUp');
+
+        // ajaxリクエストを送信
+        $j.ajax({
+            url: '{% url 'comments:like' comment.id %}',
+            method: 'POST',
+            data: {
+                comment_id: commentId,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function(response) {
+                if (response.liked) {
+                    // いいねが付けられた場合
+                    $j('.RegularThumbsUp[data-pk="' + commentId + '"]').hide();
+                    $j('.SolidThumbsUp[data-pk="' + commentId + '"]').show();
+                    localStorage.setItem('comment_' + commentId, 'liked');
+                    console.log('いいねが付けられました');
+                } else {
+                    // いいねが取り消された場合
+                    $j('.SolidThumbsUp[data-pk="' + commentId + '"]').hide();
+                    $j('.RegularThumbsUp[data-pk="' + commentId + '"]').show();
+                    localStorage.removeItem('comment_' + commentId);
+                    console.log('いいねが取り消されました');
+                }
+                // いいねの数を更新
+                $j('.SolidThumbsUp[data-pk="' + commentId + '"] span').text(response.like_count + '件のいいね');
+            },
+            error: function(xhr, errmsg, err) {
+                console.log(err);
+            }
+        });
+    });
+});
+</script>
+
+{% endblock content %}

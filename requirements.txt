@@ -1,0 +1,7 @@
+Django
+gunicorn
+django-environ
+django-allauth
+django-widget-tweaks
+argon2-cffi
+django-redis
