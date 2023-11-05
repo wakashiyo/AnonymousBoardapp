@@ -24,10 +24,11 @@
                 </div> {% endcomment %}
             <button tyoe="button" class="RegularThumbsUp" data-pk="{{ comment.id }}" style="border:none;background:none">
                 <i class="regular-thumbs-up ms-2 fa-regular fa-thumbs-up fa-2xl"></i>
-                    <span class="ms-2" style="font-size: 15px;">0件のいいね</span>
+                <span class="likeCount ms-2" style="font-size: 15px;"></span>
             </button>
             <button type="button" class="SolidThumbsUp" data-pk="{{ comment.id }}" style="border:none;background:none;display: none;">
-                    <i class="solid-thumbs-up ms-2 fa-solid fa-thumbs-up fa-2xl"></i><span class="ms-2" style="font-size: 15px;">{{ response_data.like_count }}件のいいね</span>
+                    <i class="solid-thumbs-up ms-2 fa-solid fa-thumbs-up fa-2xl"></i>
+                    <span class="likeCount ms-2" style="font-size: 15px;"></span>
             </button>
         </div>
         {% endif %}
@@ -44,26 +45,6 @@
         {% for reply in comment.replies.all %}
             <div class="reply">
                 <div class="card mb-3">
-                    {% comment %}{% if user.is_authenticated %}
-                        <div class="card-header bg-white" style="display: flex; align-items: center;">
-                            <div class="RegularHeart me-3">
-                                <i class="regular-heart fa-regular fa-heart fa-2xl"></i><span class="ms-2" style="font-size: 15px;">{{ favorite_count }}件のお気に入り</span>
-                            </div>
-                            <div class="SolidHeart me-3" style="display:none">
-                                <i class="solid-heart fa-solid fa-heart fa-2xl"></i><span class="ms-2" style="font-size: 15px;">{{ fovarite_count }}件のお気に入り</span>
-                            </div>
-                            {%if like_count == NULL %}
-                                <button type="button" class="RegularThumbsUp" data-pk="{{ comment.id }}" style="border:none;background:none">
-                                    <i class="regular-thumbs-up ms-2 fa-regular fa-thumbs-up fa-2xl"></i>
-                                        <span class="ms-2" style="font-size: 15px;">0件のいいね</span>
-                                </button>
-                            {% else %}
-                                <button type="button" class="SolidThumbsUp" data-pk="{{ comment.id }}" style="border:none;background:none">
-                                    <i class="solid-thumbs-up ms-2 fa-solid fa-thumbs-up fa-2xl"></i><span class="ms-2" style="font-size: 15px;">{{ like_count }}件のいいね</span>
-                                </button>
-                            {% endif %}
-                        </div>
-                    {% endif %}{% endcomment %}
                     <div class="card-body">
                         <p class="card-text">{{ reply.body }}</p>
                     </div>
@@ -98,15 +79,42 @@
 
 <script>
 let $j = jQuery.noConflict();
+
 $j(document).ready(function() {
-    // ページ読み込み時にローカルストレージからいいねの状態を復元
     $j('.RegularThumbsUp, .SolidThumbsUp').each(function() {
         let commentId = $j(this).data('pk');
-        let isLiked = localStorage.getItem('comment_' + commentId) === 'liked';
-        if (isLiked) {
-            $j('.RegularThumbsUp[data-pk="' + commentId + '"]').hide();
-            $j('.SolidThumbsUp[data-pk="' + commentId + '"]').show();
-        }
+
+        // ajaxリクエストを送信
+        $j.ajax({
+            url: '{% url 'comments:like' comment.id %}',
+            method: 'GET',
+            data: {
+                comment_id: commentId,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function(response) {
+                if (response.liked) {
+                    // いいねが付いている場合
+                    $j('.RegularThumbsUp[data-pk="' + commentId + '"]').hide();
+                    $j('.SolidThumbsUp[data-pk="' + commentId + '"]').show();
+
+                    // いいねの数を更新
+                    $j('.SolidThumbsUp[data-pk="' + commentId + '"] span').text(response.like_count + '件のいいね');
+                    console.log('いいねが付いています');
+                } else {
+                    // いいねが付いていない場合
+                    $j('.SolidThumbsUp[data-pk="' + commentId + '"]').hide();
+                    $j('.RegularThumbsUp[data-pk="' + commentId + '"]').show();
+
+                    // いいねの数を更新
+                    $j('.RegularThumbsUp[data-pk="' + commentId + '"] span').text(response.like_count + '件のいいね');
+                    console.log('いいねは付いていません');
+                }
+            },
+            error: function(xhr, errmsg, err) {
+                console.log(err);
+            }
+        });
     });
 
     // いいねボタンがクリックされたときの処理
@@ -128,16 +136,18 @@ $j(document).ready(function() {
                     $j('.RegularThumbsUp[data-pk="' + commentId + '"]').hide();
                     $j('.SolidThumbsUp[data-pk="' + commentId + '"]').show();
                     localStorage.setItem('comment_' + commentId, 'liked');
+                    // いいねの数を更新
+                    $j('.SolidThumbsUp[data-pk="' + commentId + '"] span').text(response.like_count + '件のいいね');
                     console.log('いいねが付けられました');
                 } else {
                     // いいねが取り消された場合
                     $j('.SolidThumbsUp[data-pk="' + commentId + '"]').hide();
                     $j('.RegularThumbsUp[data-pk="' + commentId + '"]').show();
                     localStorage.removeItem('comment_' + commentId);
+                    // いいねの数を更新
+                    $j('.RegularThumbsUp[data-pk="' + commentId + '"] span').text(response.like_count + '件のいいね');
                     console.log('いいねが取り消されました');
                 }
-                // いいねの数を更新
-                $j('.SolidThumbsUp[data-pk="' + commentId + '"] span').text(response.like_count + '件のいいね');
             },
             error: function(xhr, errmsg, err) {
                 console.log(err);

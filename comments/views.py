@@ -7,7 +7,7 @@ from django.contrib import messages
 from .forms import CommentForm
 from .models import Comment, Like
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_http_methods as require_http
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 
@@ -262,21 +262,18 @@ def comments_show(request, comment_id):
 
 # いいね機能
 @login_required
-@require_POST
+@require_http(['GET', 'POST'])
 def comments_like(request, comment_id):
     user = request.user
 
-    if comment_id:
+    if request.method == 'GET':
         comment = get_object_or_404(Comment, id=comment_id)
         existing_like = Like.objects.filter(target=comment, user=user).first()
 
         if existing_like:
-            existing_like.delete()
-            liked = False
-        else:
-            like = Like(target=comment, user=user)
-            like.save()
             liked = True
+        else:
+            liked = False
 
         like_count = Like.objects.filter(target=comment).count()
 
@@ -285,6 +282,28 @@ def comments_like(request, comment_id):
             'like_count': like_count,
         }
 
+        return JsonResponse(response_data)
+
+    else:
+        if comment_id:
+            comment = get_object_or_404(Comment, id=comment_id)
+            existing_like = Like.objects.filter(target=comment, user=user).first()
+
+            if existing_like:
+                existing_like.delete()
+                liked = False
+            else:
+                like = Like(target=comment, user=user)
+                like.save()
+                liked = True
+
+            like_count = Like.objects.filter(target=comment).count()
+            
+            response_data = {
+                'liked': liked,
+                'like_count': like_count,
+            }
+        
         return JsonResponse(response_data)
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
