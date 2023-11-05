@@ -5,13 +5,27 @@ services:
    build: .
    image: gunicorn:20.1.0
    container_name: gunicorn
+   environment:
+     - SECRET_KEY=${SECRET_KEY}
    volumes:
     - .:/usr/src/app
     - gunicorn:/var/run/gunicorn
-   env_file: docker.env
    stdin_open: true
    tty: true
    restart: always
+   depends_on:
+    - db
+  
+  db:
+    image: postgres
+    environment:
+      - TZ=Asia/Tokyo
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - 5432:5432
+    volumes:
+      - db-data:/var/lib/postgresql/data
 
   https-portal:
     image: steveltn/https-portal:1
@@ -43,7 +57,10 @@ services:
       - gunicorn:/var/run/gunicorn
     restart: always
 
+
 volumes:
   gunicorn:
     driver: local
   https-portal-data:
+  db-data:
+    driver: local
