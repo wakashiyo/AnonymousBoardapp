@@ -240,10 +240,7 @@ def comments_show(request, comment_id):
         if next_parent_comment is not None:
             next_comment = next_parent_comment
         else:
-            # 直前（自身の直後に更新されたコメント）を取得する
             prev_comment = Comment.objects.filter(updated_at__gt=comment.updated_at).exclude(parent_comment__isnull=False).order_by('updated_at').first()
-
-            # 直後（自身の直前に更新されたコメント）を取得する
             next_comment = Comment.objects.filter(updated_at__lt=comment.updated_at).exclude(parent_comment__isnull=False).order_by('-updated_at').first()
 
             if prev_comment is not None:
