@@ -15,7 +15,7 @@ services:
    restart: always
    depends_on:
     - db
-  
+
   db:
     image: postgres
     environment:
@@ -26,6 +26,26 @@ services:
       - 5432:5432
     volumes:
       - db-data:/var/lib/postgresql/data
+  
+  # db-migration:
+  #   image: postgres
+  #   volumes:
+  #     - ./db.sqlite3.sql:/dump.sql
+  #   command: psql -U postgres -d mydb -f /dump.sql
+
+  pgweb:
+    image: sosedoff/pgweb
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      - PGWEB_DB_USER=${POSTGRES_USER}
+      - PGWEB_DB_PASSWORD=${POSTGRES_PASSWORD}
+      - PGWEB_DB_NAME=postgres 
+      - PGWEB_DB_HOST=db
+      - PGWEB_DB_PORT=5432
+    depends_on:
+      - db
 
   https-portal:
     image: steveltn/https-portal:1
