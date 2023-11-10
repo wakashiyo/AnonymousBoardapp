@@ -10,6 +10,7 @@ services:
    volumes:
     - .:/usr/src/app
     - gunicorn:/var/run/gunicorn
+    - ./datadump.json:/tmp/dump.json
    stdin_open: true
    tty: true
    restart: always
@@ -26,12 +27,13 @@ services:
       - 5432:5432
     volumes:
       - db-data:/var/lib/postgresql/data
-  
-  # db-migration:
-  #   image: postgres
-  #   volumes:
-  #     - ./db.sqlite3.sql:/dump.sql
-  #   command: psql -U postgres -d mydb -f /dump.sql
+
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+    volumes:
+      - redis-data:/data
 
   pgweb:
     image: sosedoff/pgweb
@@ -83,4 +85,6 @@ volumes:
     driver: local
   https-portal-data:
   db-data:
+    driver: local
+  redis-data:
     driver: local
