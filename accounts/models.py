@@ -7,7 +7,7 @@ from django.contrib.auth.models import User, Group, Permission
 
 class UserManager(UserManager):
     def _create_user(self, username, password, **extra_fields):
-        username = self.normalize_username(username)
+        username = self.normalize_email(username)
         user = self.model(username=username, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
