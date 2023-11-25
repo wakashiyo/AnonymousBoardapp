@@ -9,8 +9,6 @@ from .models import Comment, Like
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.decorators.http import require_http_methods as require_http
 from django.contrib.auth.decorators import login_required
-from django.db import transaction
-
 
 
 
@@ -91,6 +89,56 @@ def password_auth(view_func):
             messages.error(request, 'パスワードが違います。', extra_tags='error_message')
             return redirect(reverse('comments:index'))
     return wrapped_view
+
+
+# コメント詳細表示機能
+def comments_show(request, comment_id):
+    context = {}
+    comment = get_object_or_404(Comment, pk=comment_id)
+    context['comment'] = comment
+
+
+    # 返信がついていない場合
+    if comment.parent_comment is None:
+        # 直前（自身の直後に更新されたコメント）を取得する
+        prev_comment = Comment.objects.filter(updated_at__gt=comment.updated_at).exclude(parent_comment__isnull=False).order_by('updated_at').first()
+
+        # 直後（自身の直前に更新されたコメント）を取得する
+        next_comment = Comment.objects.filter(updated_at__lt=comment.updated_at).exclude(parent_comment__isnull=False).order_by('-updated_at').first()
+
+        if prev_comment is not None:
+            prev_id = prev_comment.id
+        else:
+            prev_id = False
+        if next_comment is not None:
+            next_id = next_comment.id
+        else:
+            next_id = False
+        context['prev_id'] = prev_id
+        context['next_id'] = next_id
+    else:
+        # 次のparent_commentがないコメントを取得する
+        next_parent_comment = Comment.objects.filter(parent_comment=comment.parent_comment, updated_at__gt=comment.updated_at).exclude(parent_comment__isnull=False).order_by('updated_at').first()
+
+        # 次のparent_commentが存在する場合はそのコメントを取得する
+        if next_parent_comment is not None:
+            next_comment = next_parent_comment
+        else:
+            prev_comment = Comment.objects.filter(updated_at__gt=comment.updated_at).exclude(parent_comment__isnull=False).order_by('updated_at').first()
+            next_comment = Comment.objects.filter(updated_at__lt=comment.updated_at).exclude(parent_comment__isnull=False).order_by('-updated_at').first()
+
+            if prev_comment is not None:
+                prev_id = prev_comment.id
+            else:
+                prev_id = False
+            if next_comment is not None:
+                next_id = next_comment.id
+            else:
+                next_id = False
+            context['prev_id'] = prev_id
+            context['next_id'] = next_id
+
+    return render(request, 'comments/show.html', context)
 
 
 # コメント編集機能
@@ -207,56 +255,6 @@ def comments_reply(request, comment_id):
         return render(request, 'comments/form.html', context)
 
 
-# コメント詳細表示機能
-def comments_show(request, comment_id):
-    context = {}
-    comment = get_object_or_404(Comment, pk=comment_id)
-    context['comment'] = comment
-
-
-    # 返信がついていない場合
-    if comment.parent_comment is None:
-        # 直前（自身の直後に更新されたコメント）を取得する
-        prev_comment = Comment.objects.filter(updated_at__gt=comment.updated_at).exclude(parent_comment__isnull=False).order_by('updated_at').first()
-
-        # 直後（自身の直前に更新されたコメント）を取得する
-        next_comment = Comment.objects.filter(updated_at__lt=comment.updated_at).exclude(parent_comment__isnull=False).order_by('-updated_at').first()
-
-        if prev_comment is not None:
-            prev_id = prev_comment.id
-        else:
-            prev_id = False
-        if next_comment is not None:
-            next_id = next_comment.id
-        else:
-            next_id = False
-        context['prev_id'] = prev_id
-        context['next_id'] = next_id
-    else:
-        # 次のparent_commentがないコメントを取得する
-        next_parent_comment = Comment.objects.filter(parent_comment=comment.parent_comment, updated_at__gt=comment.updated_at).exclude(parent_comment__isnull=False).order_by('updated_at').first()
-
-        # 次のparent_commentが存在する場合はそのコメントを取得する
-        if next_parent_comment is not None:
-            next_comment = next_parent_comment
-        else:
-            prev_comment = Comment.objects.filter(updated_at__gt=comment.updated_at).exclude(parent_comment__isnull=False).order_by('updated_at').first()
-            next_comment = Comment.objects.filter(updated_at__lt=comment.updated_at).exclude(parent_comment__isnull=False).order_by('-updated_at').first()
-
-            if prev_comment is not None:
-                prev_id = prev_comment.id
-            else:
-                prev_id = False
-            if next_comment is not None:
-                next_id = next_comment.id
-            else:
-                next_id = False
-            context['prev_id'] = prev_id
-            context['next_id'] = next_id
-
-    return render(request, 'comments/show.html', context)
-
-
 # いいね機能
 @login_required
 @require_http(['GET', 'POST'])
@@ -302,5 +300,3 @@ def comments_like(request, comment_id):
             }
         
         return JsonResponse(response_data)
-
-    return JsonResponse({'error': 'Invalid request'}, status=400)
