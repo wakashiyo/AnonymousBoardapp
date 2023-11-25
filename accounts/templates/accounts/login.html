@@ -1,12 +1,35 @@
 {% extends "base.html" %}
 {% load widget_tweaks %}
+{% load socialaccount %}
+{% load env_extras %}
 
 {% block title %}
 ログイン/Login
 {% endblock %}
 
 {% block content %}
+    <style>
+        .auth-headline {
+            display: flex;
+            align-items: center;
+        }
 
+        .auth-headline::before,
+        .auth-headline::after {
+            content: '';
+            height: 1px;
+            background: #ccc;
+            flex-grow: 1;
+        }
+
+        .auth-headline::before {
+            margin-right: 1rem;
+        }
+
+        .auth-headline::after {
+            margin-left: 1rem;
+        }
+    </style>
     <div class="d-flex align-items-center py-4">
         <div class="form-signin w-50 m-auto">
             <form class="text-center" method="post">
@@ -26,6 +49,25 @@
                     </div>
                 {% endif %}
                 <button class="btn btn-primary w-50 py-2 mt-5 mb-5" type="submit">ログイン</button>
+                <div class="auth-headline mb-5">or</div>
+                <script src="https://accounts.google.com/gsi/client" async defer></script>
+                <div id="g_id_onload"
+                    data-login_uri="{% provider_login_url 'google' %}"
+                    data-client_id="{% get_env_variable 'SOCIAL_AUTH_GOOGLE_OAUTH2_KEY' %}"
+                    data-context="signin"
+                    data-ux_mode="redirect"
+                    data-auto_select="true"
+                    data-itp_support="true"
+                >
+                </div>
+                <div class="g_id_signin"
+                    data-type="standard"
+                    data-size="large"
+                    data-theme="outline"
+                    data-text="sign_in_with"
+                    data-shape="rectangular"
+                    data-logo_alignment="left">
+                </div>
                 <p class="mt-5 mb-3">&copy; 2023.</p>
             </form>
         </div>
