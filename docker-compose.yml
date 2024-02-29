@@ -10,7 +10,8 @@ services:
    volumes:
     - .:/usr/src/app
     - gunicorn:/var/run/gunicorn
-    - ./datadump.json:/tmp/dump.json
+    - ./dumpdata.json:/tmp/dump.json
+    - ./dumpdata.sql:/tmp/dump.sql
    stdin_open: true
    tty: true
    restart: always
@@ -27,6 +28,8 @@ services:
       - 5432:5432 
     volumes:
       - ./db-data:/var/lib/postgresql/data
+      - ./dumpdata.json:/tmp/dump.json
+      - ./dumpdata.sql:/tmp/dump.sql
 
   redis:
     image: redis
