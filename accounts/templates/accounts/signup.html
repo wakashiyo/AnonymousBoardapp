@@ -2,7 +2,7 @@
 {% load widget_tweaks %}
 
 {% block title %}
-サインイン/Signin
+サインアップ/Signup
 {% endblock %}
 
 {% block content %}
@@ -11,7 +11,7 @@
     <div class="form-signin w-50 m-auto">
         <form class="text-center" method="post">
             {% csrf_token %}
-            <h1 class="h3 mt-5 mb-5 fw-normal">サインイン</h1>
+            <h1 class="h3 mt-5 mb-5 fw-normal">サインアップ</h1>
             <div class="form-floating">
                 {% render_field form.username class="form-control" placeholder="ユーザー名" autocomplete="off" style="border-radius: 0;" %}
                 <label for="floatingInput">ユーザー名</label>
@@ -44,7 +44,7 @@
                 </div>
             {% endif %}
             
-            <button class="btn btn-primary w-50 py-2 mt-5 mb-5" type="submit">サインイン</button>
+            <button class="btn btn-primary w-50 py-2 mt-5 mb-5" type="submit">サインアップ</button>
             <p class="mt-5 mb-3">&copy; 2023.</p>
         </form>
     </div>

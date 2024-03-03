@@ -42,8 +42,9 @@
                     <ul class="navbar-nav me-5 ms-auto">
                             <li class="nav-item">
                             {% load account %}
-                            <span style="color: green;">{% user_display user %}</span> さん
+                                <span style="color: green;">{% user_display user %}</span> さん
                             </li>
+
                         {% else %}
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'account_signup' %}">Signup</a>
