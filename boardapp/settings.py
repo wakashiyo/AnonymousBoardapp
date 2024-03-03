@@ -39,7 +39,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -129,7 +129,12 @@ AUTH_PASSWORD_VALIDATORS = [
 SITE_ID = 1
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
-CSRF_TRUSTED_ORIGINS = ['accounts.google.com']
+SOCIAL_AUTH_GOOGLE_OAUTH2_USE_UNIQUE_USER_ID = True
+CSRF_TRUSTED_ORIGINS = ['https://accounts.google.com']
+
+GOOGLE_SERVICE_ACCOUNT_KEY_FILE = BASE_DIR + '/service_account_credentials.json'
+GOOGLE_API_SCOPES = ['https://www.googleapis.com/auth/contacts.readonly']
+
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
@@ -179,3 +184,4 @@ ACCOUNT_AUTHENTICATION_METHOD = 'username'
 LOGIN_REDIRECT_URL = '/'
 ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_DEFAULT_HTTP_PROTOCOL='https'
