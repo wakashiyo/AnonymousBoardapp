@@ -11,5 +11,6 @@ urlpatterns = [
     path('', include('comments.urls')),
     path('accounts/', include('accounts.urls')),
     path('accounts/', include('allauth.urls')),
+    # path('sicial-auth/', include('allauth.urls')),
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}), # staticファイルを配信するための設定
 ]
