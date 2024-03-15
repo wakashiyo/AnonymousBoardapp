@@ -86,11 +86,11 @@ docker compose down
 
 1. コメントの投稿
 
-    ![一覧ページ画像](./images/list.png)
+    ![一覧ページ画像](https://github.com/wakashiyo/AnonymousBoardapp/assets/129835423/c9a405d6-8ddb-4edc-884e-93400a618165)
 
 2. パスワード設定によるコメント編集操作の制限
 
-    ![投稿ページ画像](./images/posting.png)
+    ![投稿ページ画像](https://github.com/wakashiyo/AnonymousBoardapp/assets/129835423/03fc3411-46ad-49a0-8c92-a2544184acf2)
 
 3. コメントの編集、削除
 
@@ -98,21 +98,21 @@ docker compose down
 
 5. ページネーション
 
-    ![コメント詳細](./images/detail.png)
+    ![コメント詳細](https://github.com/wakashiyo/AnonymousBoardapp/assets/129835423/b6d911f1-d020-4529-8388-4db9717bab21)
 
 6. サインアップ
 
-    ![サインアップページ画像](./images/signup.png)
+    ![サインアップページ画像](https://github.com/wakashiyo/AnonymousBoardapp/assets/129835423/90c5ad1b-f444-42c6-bfc1-0f1ff3eb7c13)
 
 7. ログイン/ログアウト
 
-    ![ログインページ画像](./images/login.png)
+    ![ログインページ画像](https://github.com/wakashiyo/AnonymousBoardapp/assets/129835423/806d20b1-102b-4b1e-ac6d-43f8c8a73ba5)
 
-    ![ログアウトページ画像](./images/logout.png)
+    ![ログアウトページ画像](https://github.com/wakashiyo/AnonymousBoardapp/assets/129835423/10529e6a-3244-4aff-acf4-5e590f87e178)
 
 8. コメントのお気に入り
 
-    ![お気に入り機能画像](./images/good.png)
+    ![お気に入り機能画像](https://github.com/wakashiyo/AnonymousBoardapp/assets/129835423/21ba2574-03fe-400d-b635-ceb579ee884e)
 
 ## 発表
 
