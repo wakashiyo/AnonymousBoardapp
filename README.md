@@ -17,8 +17,8 @@
 
 ![Javascript](https://img.shields.io/badge/-Javascript-000.svg?logo=javascript&style=for-the-badge)
 ![Bootstrap](https://img.shields.io/badge/-Bootstrap-563D7C.svg?logo=bootstrap&style=for-the-badge)
-![HTML5](https://img.shields.io/badge/-CSS3-1572B6.svg?logo=css3&style=for-the-badge)
-![CSS3](https://img.shields.io/badge/-HTML5-333.svg?logo=html5&style=for-the-badge)
+![HTML5](https://img.shields.io/badge/-HTML5-333.svg?logo=html5&style=for-the-badge)
+![CSS3](https://img.shields.io/badge/-CSS3-1572B6.svg?logo=css3&style=for-the-badge)
 
 ### BACKEND
 
