@@ -17,6 +17,8 @@
 
 ![Javascript](https://img.shields.io/badge/-Javascript-000.svg?logo=javascript&style=for-the-badge)
 ![Bootstrap](https://img.shields.io/badge/-Bootstrap-563D7C.svg?logo=bootstrap&style=for-the-badge)
+![HTML5](https://img.shields.io/badge/-CSS3-1572B6.svg?logo=css3&style=for-the-badge)
+![CSS3](https://img.shields.io/badge/-HTML5-333.svg?logo=html5&style=for-the-badge)
 
 ### BACKEND
 
@@ -32,6 +34,7 @@
 ### INFRASTRUCTURE
 
 ![Docker](https://img.shields.io/badge/-Docker-1488C6.svg?logo=docker&style=for-the-badge)
+![Google Cloud](https://img.shields.io/badge/-Google%20Cloud-EEE.svg?logo=google-cloud&style=for-the-badge)
 
 ### EDITOR
 
